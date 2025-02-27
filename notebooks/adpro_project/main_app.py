@@ -24,7 +24,6 @@ def main():
         ax_1.bar(movie_type_df["Movie_Type"], movie_type_df["Count"])
         ax_1.set_xlabel("Movie Type")
         ax_1.set_ylabel("Count")
-        # Rotate x-axis labels for clarity.
         plt.setp(ax_1.get_xticklabels(), rotation=45, ha="right")
         st.pyplot(fig_1)
     except Exception as e:
@@ -45,11 +44,11 @@ def main():
     # 3. Actor Distributions
     st.header("Actor Distributions")
     gender = st.selectbox("Select Gender:", ["All", "M", "F"])
-    min_height = st.number_input("Min Height:", value=130.0)
-    max_height = st.number_input("Max Height:", value=210.0)
-    do_plot = st.checkbox("Show Distribution Plot?", value=False)
+    # Now heights are in meters.
+    min_height = st.number_input("Min Height (m):", value=1.4, step=0.01)
+    max_height = st.number_input("Max Height (m):", value=2.1, step=0.01)
+    do_plot = st.checkbox("Show Distribution Plot?", value=True)
     try:
-        # If plot is requested, actor_distributions returns (df, fig)
         result = analyzer.actor_distributions(
             gender=gender,
             max_height=max_height,

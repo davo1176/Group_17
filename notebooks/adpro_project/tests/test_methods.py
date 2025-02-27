@@ -11,12 +11,12 @@ def test_actor_distributions_invalid_args():
 
     # Check invalid gender (non-string)
     with pytest.raises(Exception):
-        analyzer.actor_distributions(gender=123, max_height=200.0, min_height=150.0)
+        analyzer.actor_distributions(gender=123, max_height=2.0, min_height=1.5)
 
     # Check invalid height (non-numeric max_height)
     with pytest.raises(Exception):
-        analyzer.actor_distributions(gender="All", max_height="big", min_height=150.0)
+        analyzer.actor_distributions(gender="All", max_height="big", min_height=1.5)
 
     # Check unrealistic height values (min_height >= max_height)
     with pytest.raises(Exception):
-        analyzer.actor_distributions(gender="All", max_height=150.0, min_height=200.0)
+        analyzer.actor_distributions(gender="All", max_height=1.5, min_height=2.0)
