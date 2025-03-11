@@ -4,9 +4,7 @@ import json
 import requests
 import pandas as pd
 import matplotlib.pyplot as plt
-
 from pydantic import validate_call
-
 
 class MovieAnalyzer:
     """
@@ -55,6 +53,7 @@ class MovieAnalyzer:
         # For movies, we use column names based on your sample:
         # movie_id, freebase_id, title, release_date, imdb_id, runtime, languages, countries, genres
         movie_metadata_path = os.path.join(self.extracted_folder, "movie.metadata.tsv")
+
         # For actors, the sample data has 13 columns.
         character_metadata_path = os.path.join(self.extracted_folder, "character.metadata.tsv")
 
@@ -167,8 +166,10 @@ class MovieAnalyzer:
         df = self.actors_df.copy()
         # Fill missing gender values.
         df["gender"] = df["gender"].fillna("Unknown")
+
         if gender != "All":
             df = df[df["gender"] == gender]
+
         df = df.dropna(subset=["height"])
         df = df[(df["height"] >= min_height) & (df["height"] <= max_height)]
 
@@ -189,3 +190,83 @@ class MovieAnalyzer:
             return df, fig
 
         return df
+
+    # ---------------------------
+    # NEW METHOD 1: releases
+    # ---------------------------
+    @validate_call
+    def releases(self, genre: str = None) -> pd.DataFrame:
+        """
+        Returns a DataFrame with columns ["Year", "Count"] representing
+        how many movies were released per year.
+        If 'genre' is None or "None", it does not filter. Otherwise, it filters
+        for movies containing that genre.
+        """
+        if self.movies_df.empty:
+            raise Exception("Movie data not loaded.")
+
+        df = self.movies_df.copy()
+
+        # Convert 'release_date' to datetime; drop invalid or missing
+        df["release_date"] = pd.to_datetime(df["release_date"], errors="coerce")
+        df.dropna(subset=["release_date"], inplace=True)
+
+        # Extract year
+        df["Year"] = df["release_date"].dt.year
+
+        # If user-provided genre is actually None or the string "None" (from Streamlit),
+        # we skip filtering and simply group *all* movies by year.
+        if genre is not None and genre != "None":
+            # Parse the 'genres' column to filter properly
+            def extract_genres(genre_str: str) -> list:
+                if not genre_str or genre_str.strip() in ("", "{}"):
+                    return []
+                try:
+                    d = json.loads(genre_str)
+                    return list(d.values())
+                except:
+                    return []
+
+            df["parsed_genres"] = df["genres"].fillna("").apply(extract_genres)
+            df = df[df["parsed_genres"].apply(lambda g_list: genre in g_list)]
+
+            # Group by year and count
+            result = df.groupby("Year").size().reset_index(name="Count")
+            result.sort_values("Year", inplace=True)
+            return result
+
+
+    # ---------------------------
+    # NEW METHOD 2: ages
+    # ---------------------------
+    @validate_call
+    def ages(self, mode: str = "Y") -> pd.DataFrame:
+        """
+        Counts how many births happened per chosen interval: 'Y' for Year or 'M' for Month
+        (optionally handle 'D' if desired). If user selects anything else, default to 'Y'.
+        
+        Returns a DataFrame of either:
+          - ["Birth_Year", "Count"]
+          - ["Birth_Month", "Count"]  (for M)
+          - ["Birth_Day", "Count"]    (for D, if desired)
+        """
+        if self.actors_df.empty:
+            raise Exception("Actor data not loaded.")
+
+        df = self.actors_df.copy()
+        df["birthdate"] = pd.to_datetime(df["actor_birthdate"], errors="coerce")
+        df.dropna(subset=["birthdate"], inplace=True)
+
+        if mode == "M":
+            df["Birth_Month"] = df["birthdate"].dt.month
+            result = df.groupby("Birth_Month").size().reset_index(name="Count")
+            return result
+        elif mode == "D":
+            df["Birth_Day"] = df["birthdate"].dt.day
+            result = df.groupby("Birth_Day").size().reset_index(name="Count")
+            return result
+        else:
+            # Default to Year
+            df["Birth_Year"] = df["birthdate"].dt.year
+            result = df.groupby("Birth_Year").size().reset_index(name="Count")
+            return result
