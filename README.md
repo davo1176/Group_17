@@ -1,78 +1,134 @@
 # Project Title
 # Welcome to project RAG-TAG
 ---
+# Movie Analysis App (Group 17)
 
-## Scenario
+Welcome to the **Movie Analysis App**, a Streamlit-based application that explores movie data (titles, genres, actor information, etc.) from the [CMU Movie Summary](https://www.cs.cmu.edu/~ark/personas/) corpus. This repository also includes a **third page** that demonstrates using a local Large Language Model (LLM), via [Ollama](https://github.com/jmorganca/ollama), to classify a movie’s genre by its plot summary.
 
-Your group is participating in a two-day Hackathon where the goal is to analyse Movie information. The aim is to gain experience with a fun dataset so your product can later be used to analyse legal, technical, or any other kind of complicated documents. You decide to create a **python class** to help with the challenge.
+---
 
-## Goal
+## Repository Structure
 
-For this project, we will be using data from [CMU movie corpus](https://www.cmu.edu/). The datasets can be found [here](http://www.cs.cmu.edu/~ark/personas/). We will use just the main [Dataset](http://www.cs.cmu.edu/~ark/personas/data/MovieSummaries.tar.gz).
-
-Go over the datasets with your group. Check the info on the website before you start.
-
-<div class="alert alert-danger">
-    <b> THE MOST IMPORTANT TOOLS FOR A DATA SCIENTIST ARE PATIENCE AND COMMUNICATION</b>
-    <br>
-    <b> Discuss the contents of the dataset with your colleagues. Understanding the data is a priority. </b>
-</div>
-
-Use whatever python tools you find apropriate.
-
-## Structure of the project
-
-You are going to build a **[Streamlit app](https://streamlit.io/)** that will showcase your analysis.  
-Keep all the .py and .ipynb out of the main directory. The only files in the main directory of the project should be the **files necessary to launch the app** and the several configuration files (.yml, .gitignore, and others). Everything else should have their own directories, like downloaded content.
-
-### Day 1, Phase 1
-
-- One of you will create a github repository (it does not matter who). __THE NAME OF THE REPOSITORY MUST BE "Group_XX" where XX is the number of your group! If you are group 3, then XX must be 03. Always use two digits and an underscore!__
-- Initialize the repo with a README.md file, a proper license, and a .gitignore for the programming language you will use. The README.md file __MUST__ have your emails in a way that it is possible to copy and paste it into an email.
-- The one who created the repository will then give __Maintainer__ permissions to the rest of the group. Check under "Project Information" > "Members".
-- [ ] Every element of the group clones the repository to their own laptops.
-
-### Day 1, Phase 2
-
-- [ ] The class you decide the create for the project has finally been named after a brief internal fight and is __PEP8 compliant, like the entire project__.
-
-The class will have several methods, which you will __not__ develop in the master branch.  
-Document everything!  
-Make your calls compliant with __pydantic__ and __static type checking__ when appliable.
-
-- [ ] During the _init_ method, your class must download the data file into a __downloads/__ directory in the root directory of the project (main project directory). If the data file already exists, the method will not download it again.
-- [ ] The _init_ method must also unzip the files.
-- [ ] The _init_ method must also read the datasets into corresponding pandas dataframes which become attributes for your class.
-
-## Day 1, Phase 3
-
-- [ ] Develop a first method for your class called __movie_type__ that accepts a single int parameter "N" with a default value of 10. If N is not an integer, raise an Exception. It should calculate a pandas dataframe with columns "Movie_Type" of the "N" most common types of movies and how many times they show up in the database. 
-- [ ] Develop a second method called __actor_count__. This method calculates a pandas dataframe with a histogram of "number of actors" vs "movie counts".
-- [ ] Develop a third method called __actor_distributions__ that receives as arguments a string called "gender", two floats: "max_height" and "min_height", and a bool called "plot", with default False. If "gender" is not a string of if the hieghts are not numerical values, an exception must be raised. If the variable "plot" is True, this method should do a plot in matplotlib of the height distributions. The "gender" variable should accept "All" or the distinct non-missing values in the dataset. Do you think the heights should have a special check?
-- [ ] Make a test with pytest (I want to just run _pytest_ in the main directory and perform the tests) where you test if the error handling the first and third methods are working properly.
-
-### Day 1, Phase 4
-
-- [ ] Make a Streamlit App where you import your __Class__ and plot the contents of each method in a plot.
-        * It should plot an histogram of the __movie_type__ method and the app must have a field where to select the value of N.
-        * It should plot a second histogram with the result of method __actor_count__.
-        * It should plot the distribution or distributions of the third method. Add a dropdown to select "gender" and two input fields for the heights in the app. 
-
-**If you feel lost about what story to tell, don't hesitate to contact me.**
-
-<div class="alert alert-info">
-    <b> REMEMBER: The first delivery is until March 2 23:59:59 and it is not graded. It is used as course correction. The delivery is the git repo link on moodle. </b>
-</div>
+GROUP_17/ ├── main_app.py ├── pages/ │ ├── 2_chronological_app.py │ └── 3_llm_page.py <-- NEW page for local LLM classification ├── src/ │ ├── init.py │ └── movie_analyzer.py ├── tests/ │ ├── init.py │ └── test_methods.py └── README.md <-- (You are here)
 
 
-<div class="alert alert-info">
-    <b> REMEMBER: IT IS OK TO PROTOTYPE CODE IN NOTEBOOKS, BUT THE CLASS MUST BE IN A SINGLE .py FILE! </b>
-    <br>
-    <b> Prototyping notebooks must have their own separate directory.</b>
-    <br>
-    <b> We will only consider contents in your "master" repository.</b>
-</div>
+- **main_app.py**: The main Streamlit entry point with core functionalities (common movie types, actor count, actor distributions).
+- **pages/2_chronological_app.py**: A second Streamlit page displaying chronological movie releases and actor birth data.
+- **pages/3_llm_page.py**: **New** page that uses a local LLM for genre classification based on the movie’s plot summary.
+- **src/movie_analyzer.py**: Main Python class `MovieAnalyzer` that loads and analyzes the data.
+- **tests/test_methods.py**: Pytest-based unit tests for validating certain user inputs and behaviors in `MovieAnalyzer`.
 
-<div class="alert alert-warning">
-    <b>When in doubt, ask.</b>
-</div>
+---
+
+## Data Source
+
+This app downloads and works with the CMU Movie Summary dataset:
+- [MovieSummaries.tar.gz](https://www.cs.cmu.edu/~ark/personas/data/MovieSummaries.tar.gz)
+
+Upon first run, the dataset is automatically downloaded into a `downloads/` folder. Files are extracted and loaded into `pandas` DataFrames for analysis.
+
+**Note**: The dataset includes:
+- `movie.metadata.tsv` for movie info.
+- `character.metadata.tsv` for actor info.
+- `plot_summaries.txt` for plot summaries (used by the new LLM page).
+
+---
+
+## Setup & Installation
+
+1. **Clone** or download this repository:
+   ```bash
+   git clone https://github.com/your-username/GROUP_17.git
+   cd GROUP_17
+
+Install dependencies. We recommend using a virtual environment:
+
+bash
+Copy
+Edit
+python -m venv venv
+source venv/bin/activate  # or "venv\Scripts\activate" on Windows
+pip install -r requirements.txt
+(Optional) Install Pytest if not included:
+
+bash
+Copy
+Edit
+pip install pytest
+[Local LLM Prerequisite for 3rd page]
+
+The third page (3_llm_page.py) uses a local LLM from Ollama.
+
+Install ollama on your system following their instructions.
+Pull a model of your choice, e.g., llama2:
+bash
+Copy
+Edit
+ollama pull llama2
+Make sure the Python package ollama is installed (add to requirements.txt if needed):
+bash
+Copy
+Edit
+pip install ollama
+Once installed, the third page can connect to your local model.
+If you do not set up Ollama, the third page may fail or display errors, but the other two pages (main_app.py and 2_chronological_app.py) should continue to work.
+
+Running the App
+After installing all dependencies:
+
+bash
+Copy
+Edit
+streamlit run main_app.py
+Streamlit will launch and usually open in your browser at http://localhost:8501.
+
+Available Pages
+When Streamlit starts, you will see a navigation menu (sidebar) with:
+
+main_app.py (the default)
+
+Most Common Movie Types: A bar chart of how often each genre appears.
+Actor Count Distribution: Number of actors in each movie.
+Actor Distributions: Filter actors by gender and height range, optionally showing a histogram.
+2_chronological_app.py (listed as 2_chronological_app in the sidebar)
+
+Plots the number of movies released each year (optionally filtered by genre).
+Plots actor births grouped by year or month.
+3_llm_page.py (listed as 3_llm_page in the sidebar)
+
+Shuffle: Fetch a random movie, display its title & summary, show its genres from the database, then query the local LLM to classify its genre.
+The LLM also checks if the classification matches the database’s list.
+Running the Tests
+If you have Pytest installed, you can run the tests by:
+
+bash
+Copy
+Edit
+pytest tests
+These tests primarily validate:
+
+movie_type method raises exceptions on invalid inputs.
+actor_distributions method checks for valid gender and realistic height values.
+Notes & Limitations
+Large Data: The CMU Movie Summaries dataset can be sizable (a few hundred MBs). The app automatically downloads and extracts the data only once.
+Performance: The local LLM calls (page 3) may take some time, depending on your hardware and the model size.
+Genres: The genre data in movie.metadata.tsv is stored as JSON-like strings. The code parses and explodes them.
+Plot Summaries: Not all movies have a summary. If a random movie’s summary is missing, the third page will display an empty summary.
+Contributing
+Pull requests, suggestions, and improvements are welcome!
+
+For major changes, please open an issue first to discuss what you would like to change.
+License
+This project is licensed under your chosen license. (e.g., MIT, Apache 2.0, etc.)
+
+sql
+Copy
+Edit
+
+Enjoy exploring movie data and experimenting with local LLM-based genre classification!
+
+
+
+
+
+

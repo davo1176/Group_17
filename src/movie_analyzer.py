@@ -1,3 +1,7 @@
+"""
+movie_analyzer.py
+"""
+
 import os
 import tarfile
 import json
@@ -6,6 +10,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pydantic import validate_call
 from typing import Optional
+
+# ADDED: Additional imports for random sampling
+import random
 
 class MovieAnalyzer:
     """
@@ -54,10 +61,10 @@ class MovieAnalyzer:
         # For movies, we use column names based on your sample:
         # movie_id, freebase_id, title, release_date, imdb_id, runtime, languages, countries, genres
         movie_metadata_path = os.path.join(self.extracted_folder, "movie.metadata.tsv")
-
         # For actors, the sample data has 13 columns.
         character_metadata_path = os.path.join(self.extracted_folder, "character.metadata.tsv")
 
+        # Load Movies
         if os.path.exists(movie_metadata_path):
             self.movies_df = pd.read_csv(
                 movie_metadata_path,
@@ -71,6 +78,7 @@ class MovieAnalyzer:
         else:
             self.movies_df = pd.DataFrame()
 
+        # Load Actors
         if os.path.exists(character_metadata_path):
             self.actors_df = pd.read_csv(
                 character_metadata_path,
@@ -99,6 +107,22 @@ class MovieAnalyzer:
         else:
             self.actors_df = pd.DataFrame()
 
+        # ADDED: Load Plot Summaries if present (plot_summaries.txt)
+        plot_summaries_path = os.path.join(self.extracted_folder, "plot_summaries.txt")
+        if os.path.exists(plot_summaries_path):
+            # This file has format: movie_id \t summary
+            self.summaries_df = pd.read_csv(
+                plot_summaries_path,
+                sep="\t",
+                header=None,
+                names=["movie_id", "summary"],
+                encoding="utf-8",
+                quoting=3,  # to handle any quotation issues
+                on_bad_lines="skip"
+            )
+        else:
+            self.summaries_df = pd.DataFrame(columns=["movie_id", "summary"])
+
     @validate_call
     def movie_type(self, N: int = 10) -> pd.DataFrame:
         """
@@ -126,6 +150,7 @@ class MovieAnalyzer:
         df = self.movies_df.copy()
         df["genres"] = df["genres"].fillna("").apply(extract_genres)
         df = df.explode("genres")
+
         counts = df["genres"].value_counts().reset_index()
         counts.columns = ["Movie_Type", "Count"]
         return counts.head(N)
@@ -183,6 +208,7 @@ class MovieAnalyzer:
                 ax.set_xlabel("Height (m)")
                 ax.set_ylabel("Frequency")
                 return df, fig
+
             fig, ax = plt.subplots(figsize=(8, 4))
             ax.hist(df["height"], bins=20, edgecolor="black")
             ax.set_title("Actor Height Distribution")
@@ -193,7 +219,7 @@ class MovieAnalyzer:
         return df
 
     @validate_call
-    def releases(self, genre: str = None) -> pd.DataFrame:
+    def releases(self, genre: Optional[str] = None) -> pd.DataFrame:
         """
         Returns a DataFrame with columns ["Year", "Count"] representing
         how many movies were released per year.
@@ -207,6 +233,7 @@ class MovieAnalyzer:
         # Convert 'release_date' to datetime; drop invalid or missing
         df["release_date"] = pd.to_datetime(df["release_date"], errors="coerce")
         df.dropna(subset=["release_date"], inplace=True)
+
         # Extract year
         df["Year"] = df["release_date"].dt.year
 
@@ -253,3 +280,47 @@ class MovieAnalyzer:
             df["Birth_Year"] = df["birthdate"].dt.year
             result = df.groupby("Birth_Year").size().reset_index(name="Count")
             return result
+
+    # --------------------------------------------------------------------
+    # ADDED: Helper to get a random movie, its summary, and its genres
+    # --------------------------------------------------------------------
+    @validate_call
+    def get_random_movie_info(self) -> dict:
+        """
+        Returns a dictionary containing:
+            {
+              'title': ...,
+              'summary': ...,
+              'genres_list': [list of genres as strings],
+              'movie_id': ...
+            }
+        If no summary is found for a chosen movie, returns an empty summary.
+        """
+        if self.movies_df.empty:
+            raise Exception("No movies data available.")
+
+        # Merge with summaries to ensure we can get the summary
+        merged_df = pd.merge(self.movies_df, self.summaries_df, on="movie_id", how="left")
+
+        # Convert genres from JSON to list
+        def parse_genres(genre_str):
+            if pd.isna(genre_str) or genre_str.strip() in ("", "{}"):
+                return []
+            try:
+                d = json.loads(genre_str)
+                return list(d.values())
+            except:
+                return []
+
+        merged_df["genres_list"] = merged_df["genres"].apply(parse_genres)
+        if merged_df.empty:
+            raise Exception("Merged movies & summaries is empty or invalid.")
+
+        random_row = merged_df.sample(n=1).iloc[0]
+
+        return {
+            "movie_id": random_row["movie_id"],
+            "title": str(random_row["title"]),
+            "summary": str(random_row["summary"]) if not pd.isna(random_row["summary"]) else "",
+            "genres_list": random_row["genres_list"]
+        }
