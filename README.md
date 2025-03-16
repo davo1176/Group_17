@@ -134,6 +134,11 @@ Enjoy exploring movie data and experimenting with local LLM-based genre classifi
 
 Essay:
 
+Generative AI text topic identification is a game-changer for advancing the Sustainable Development Goals (SDGs). By efficiently parsing massive volumes of text, from academic papers and policy documents to social media chatter, it can identify emerging trends, public sentiments, and key areas that need attention. This enables governments, NGOs, and private entities to make data-driven decisions, streamlining efforts toward a more sustainable and equitable future.
+  
+Another viable application is boosting policy accessibility (SDG10). With Gen AI, complex policies can be broken down into simpler, more digestible content, making it easier for everyday people to understand and engage with them. This democratizes information, reduces inequalities, and empowers citizens by providing clearer insights into governmental actions and public services.
+  
+Another critical area is the identification of gender biases in public documents (SDG5). By analyzing language patterns and content, AI can spot subtle biases that might otherwise go unnoticed, flagging them for review. This proactive approach not only enhances transparency but also helps institutions correct imbalances, fostering a more inclusive society where gender equality is prioritized.
 
 
 
