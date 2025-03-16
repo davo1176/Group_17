@@ -43,43 +43,43 @@ Upon first run, the dataset is automatically downloaded into a `downloads/` fold
 
 Install dependencies. We recommend using a virtual environment:
 
-'''bash
-Copy
-Edit
-python -m venv venv
-source venv/bin/activate  # or "venv\Scripts\activate" on Windows
-pip install -r requirements.txt'''
+    '''bash
+    Copy
+    Edit
+    python -m venv venv
+    source venv/bin/activate  # or "venv\Scripts\activate" on Windows
+    pip install -r requirements.txt'''
 (Optional) Install Pytest if not included:
 
-'''bash
-Copy
-Edit
-pip install pytest'''
+    '''bash
+    Copy
+    Edit
+    pip install pytest'''
 [Local LLM Prerequisite for 3rd page]
 
 The third page (3_Genre_Classifier.py) uses a local LLM from Ollama.
 
 Install ollama on your system following their instructions.
 Pull a model of your choice, e.g., llama2. In our case, the model works best with 'deepseek-r1:7b':
-'''bash
-Copy
-Edit
-ollama pull deepseek-r1:7b'''
+    '''bash
+    Copy
+    Edit
+    ollama pull deepseek-r1:7b'''
 Make sure the Python package ollama is installed (add to requirements.txt if needed):
-'''bash
-Copy
-Edit
-pip install ollama'''
+    '''bash
+    Copy
+    Edit
+    pip install ollama'''
 Once installed, the third page can connect to your local model.
 If you do not set up Ollama, the third page may fail or display errors, but the other two pages (Movie_Analyzer.py and 2_Movie_Releases_Over_Time.py) should continue to work.
 
 Running the App
 After installing all dependencies:
 
-'''bash
-Copy
-Edit
-streamlit run Movie_Analyzer.py'''
+    '''bash
+    Copy
+    Edit
+    streamlit run Movie_Analyzer.py'''
 Streamlit will launch and usually open in your browser at http://localhost:8501.
 
 Available Pages
@@ -105,10 +105,10 @@ Running the Tests
 
 If you have Pytest installed, you can run the tests by:
 
-'''bash
-Copy
-Edit
-pytest tests
+    '''bash
+    Copy
+    Edit
+    pytest tests
 These tests primarily validate:
 
 movie_type method raises exceptions on invalid inputs.
