@@ -12,7 +12,7 @@ Welcome to the **Movie Analysis App**, a Streamlit-based application that explor
 GROUP_17/ ├── Movie_Analyzer.py ├── pages/ │ ├── 2_Movie_Releases_Over_Time.py │ └── 3_Genre_Classifier.py ├── src/ │ ├── init.py │ └── movie_analyzer.py ├── tests/ │ ├── init.py │ └── test_methods.py └── README.md <-- (You are here)
 
 
-- **main_app.py**: The main Streamlit entry point with core functionalities (common movie types, actor count, actor distributions).
+- **Movie_Analyzer.py**: The main Streamlit entry point with core functionalities (common movie types, actor count, actor distributions).
 - **pages/2_Movie_Releases_Over_Time.py**: A second Streamlit page displaying chronological movie releases and actor birth data.
 - **pages/3_Genre_Classifier.py**: **New** page that uses a local LLM for genre classification based on the movie’s plot summary.
 - **src/movie_analyzer.py**: Main Python class `MovieAnalyzer` that loads and analyzes the data.
