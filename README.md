@@ -9,12 +9,12 @@ Welcome to the **Movie Analysis App**, a Streamlit-based application that explor
 
 ## Repository Structure
 
-GROUP_17/ ├── main_app.py ├── pages/ │ ├── 2_chronological_app.py │ └── 3_llm_page.py <-- NEW page for local LLM classification ├── src/ │ ├── init.py │ └── movie_analyzer.py ├── tests/ │ ├── init.py │ └── test_methods.py └── README.md <-- (You are here)
+GROUP_17/ ├── Movie_Analyzer.py ├── pages/ │ ├── 2_Movie_Releases_Over_Time.py │ └── 3_Genre_Classifier.py ├── src/ │ ├── init.py │ └── movie_analyzer.py ├── tests/ │ ├── init.py │ └── test_methods.py └── README.md <-- (You are here)
 
 
 - **main_app.py**: The main Streamlit entry point with core functionalities (common movie types, actor count, actor distributions).
-- **pages/2_chronological_app.py**: A second Streamlit page displaying chronological movie releases and actor birth data.
-- **pages/3_llm_page.py**: **New** page that uses a local LLM for genre classification based on the movie’s plot summary.
+- **pages/2_Movie_Releases_Over_Time.py**: A second Streamlit page displaying chronological movie releases and actor birth data.
+- **pages/3_Genre_Classifier.py**: **New** page that uses a local LLM for genre classification based on the movie’s plot summary.
 - **src/movie_analyzer.py**: Main Python class `MovieAnalyzer` that loads and analyzes the data.
 - **tests/test_methods.py**: Pytest-based unit tests for validating certain user inputs and behaviors in `MovieAnalyzer`.
 
@@ -57,21 +57,21 @@ Edit
 pip install pytest
 [Local LLM Prerequisite for 3rd page]
 
-The third page (3_llm_page.py) uses a local LLM from Ollama.
+The third page (3_Genre_Classifier.py) uses a local LLM from Ollama.
 
 Install ollama on your system following their instructions.
-Pull a model of your choice, e.g., llama2:
+Pull a model of your choice, e.g., llama2. In our case, the model works best with 'deepseek-r1:7b':
 bash
 Copy
 Edit
-ollama pull llama2
+ollama pull deepseek-r1:7b
 Make sure the Python package ollama is installed (add to requirements.txt if needed):
 bash
 Copy
 Edit
 pip install ollama
 Once installed, the third page can connect to your local model.
-If you do not set up Ollama, the third page may fail or display errors, but the other two pages (main_app.py and 2_chronological_app.py) should continue to work.
+If you do not set up Ollama, the third page may fail or display errors, but the other two pages (Movie_Analyzer.py and 2_Movie_Releases_Over_Time.py) should continue to work.
 
 Running the App
 After installing all dependencies:
@@ -79,26 +79,30 @@ After installing all dependencies:
 bash
 Copy
 Edit
-streamlit run main_app.py
+streamlit run Movie_Analyzer.py
 Streamlit will launch and usually open in your browser at http://localhost:8501.
 
 Available Pages
 When Streamlit starts, you will see a navigation menu (sidebar) with:
 
-main_app.py (the default)
+Movie_Analyzer.py (the default)
 
 Most Common Movie Types: A bar chart of how often each genre appears.
 Actor Count Distribution: Number of actors in each movie.
 Actor Distributions: Filter actors by gender and height range, optionally showing a histogram.
-2_chronological_app.py (listed as 2_chronological_app in the sidebar)
+
+2_Movie_Releases_Over_Time.py (listed as 'Movie Releases Over Time' in the sidebar)
 
 Plots the number of movies released each year (optionally filtered by genre).
 Plots actor births grouped by year or month.
-3_llm_page.py (listed as 3_llm_page in the sidebar)
+
+3_Genre_Classifier.py (listed as 'Genre Classifier' in the sidebar)
 
 Shuffle: Fetch a random movie, display its title & summary, show its genres from the database, then query the local LLM to classify its genre.
 The LLM also checks if the classification matches the database’s list.
+
 Running the Tests
+
 If you have Pytest installed, you can run the tests by:
 
 bash
@@ -128,6 +132,7 @@ Edit
 Enjoy exploring movie data and experimenting with local LLM-based genre classification!
 
 
+Essay:
 
 
 

@@ -39,9 +39,10 @@ def main():
             st.info("No valid actor birthdate data found.")
         else:
             if mode == "M":
-                x_col = "Birth_Month"
+                x_col = "Birth Month"
             else:
-                x_col = "Birth_Year"
+                x_col = "Birth Year"
+                
             fig2, ax2 = plt.subplots()
             ax2.bar(ages_df[x_col], ages_df["Count"])
             ax2.set_xlabel(x_col)
